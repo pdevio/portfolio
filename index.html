@@ -122,17 +122,48 @@ nav.scrolled {
 }
 .theme-toggle:hover { border-color: var(--border-hover); color: var(--text); background: var(--card-hover); }
 
-.hamburger { display: none; flex-direction: column; gap: 5px; cursor: none; padding: 4px; }
-.hamburger span { display: block; width: 22px; height: 1.5px; background: var(--text); transition: all 0.3s; }
+.hamburger {
+  display: none; flex-direction: column; justify-content: center;
+  gap: 6px; cursor: none; padding: 8px; background: none; border: none;
+  width: 40px; height: 40px; border-radius: 10px;
+  transition: background 0.3s;
+}
+.hamburger:hover { background: var(--card); }
+.hamburger span {
+  display: block; width: 20px; height: 1px;
+  background: var(--text); border-radius: 2px;
+  transition: transform 0.35s cubic-bezier(.77,0,.175,1), opacity 0.25s, width 0.3s;
+  transform-origin: center;
+}
+.hamburger span:nth-child(3) { width: 13px; }
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); width: 20px; }
+.hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); width: 20px; }
 
 /* ---- MOBILE NAV ---- */
 .mobile-nav {
-  display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
   background: var(--bg); z-index: 99; flex-direction: column;
-  align-items: center; justify-content: center; gap: 40px;
+  align-items: center; justify-content: center; gap: 32px;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.3s ease;
+  display: flex;
 }
-.mobile-nav.open { display: flex; }
-.mobile-nav a { font-size: 28px; font-weight: 700; color: var(--text); text-decoration: none; letter-spacing: -0.02em; }
+.mobile-nav.open { opacity: 1; pointer-events: all; }
+.mobile-nav a {
+  font-size: 32px; font-weight: 800; color: var(--text2);
+  text-decoration: none; letter-spacing: -0.03em;
+  transition: color 0.25s, transform 0.25s;
+  transform: translateY(8px); opacity: 0;
+}
+.mobile-nav.open a { transform: translateY(0); opacity: 1; }
+.mobile-nav.open a:nth-child(1) { transition-delay: 0.05s; }
+.mobile-nav.open a:nth-child(2) { transition-delay: 0.1s; }
+.mobile-nav.open a:nth-child(3) { transition-delay: 0.15s; }
+.mobile-nav.open a:nth-child(4) { transition-delay: 0.2s; }
+.mobile-nav a:hover { color: var(--text); }
+.mobile-nav-footer { display: flex; gap: 16px; margin-top: 16px; opacity: 0; transform: translateY(8px); transition: opacity 0.3s 0.25s, transform 0.3s 0.25s; }
+.mobile-nav.open .mobile-nav-footer { opacity: 1; transform: translateY(0); }
 
 /* ---- SECTIONS ---- */
 section { padding: 100px 40px; max-width: 1100px; margin: 0 auto; }
@@ -380,6 +411,7 @@ body::before {
   nav { padding: 16px 20px; }
   .nav-links { display: none; }
   .hamburger { display: flex; }
+  .nav-links .theme-toggle { display: none; }
   #hero { padding: 100px 20px 60px; }
   .hero-grid { grid-template-columns: 1fr; gap: 40px; }
   .hero-image-wrap { order: -1; }
@@ -427,9 +459,13 @@ body::before {
   <a href="#skills" onclick="closeMobile()">Skills</a>
   <a href="#github" onclick="closeMobile()">GitHub</a>
   <a href="#projects" onclick="closeMobile()">Projects</a>
-  <button class="theme-toggle" onclick="toggleTheme()" style="margin-top:20px">
-    <i class="fa-regular fa-moon" id="themeIconMobile"></i>
-  </button>
+  <div class="mobile-nav-footer">
+    <button class="theme-toggle" onclick="toggleTheme()">
+      <i class="fa-regular fa-moon" id="themeIconMobile"></i>
+    </button>
+    <a href="https://github.com/pdevio" target="_blank" class="social-link"><i class="fa-brands fa-github"></i></a>
+    <a href="https://x.com/pdev_io" target="_blank" class="social-link"><i class="fa-brands fa-x-twitter"></i></a>
+  </div>
 </div>
 
 <!-- HERO -->
@@ -489,7 +525,7 @@ body::before {
       <div class="info-card">
         <div class="label">Location</div>
         <div class="value">India</div>
-        <div class="sub">Jharkhand / West Bengal region</div>
+        <div class="sub">India</div>
       </div>
       <div class="info-card">
         <div class="label">Age</div>
@@ -660,8 +696,11 @@ applyTheme(saved);
 // ---- MOBILE NAV ----
 const hamburger = document.getElementById('hamburger');
 const mobileNav = document.getElementById('mobileNav');
-hamburger.addEventListener('click', () => mobileNav.classList.toggle('open'));
-function closeMobile() { mobileNav.classList.remove('open'); }
+hamburger.addEventListener('click', () => {
+  const isOpen = mobileNav.classList.toggle('open');
+  hamburger.classList.toggle('open', isOpen);
+});
+function closeMobile() { mobileNav.classList.remove('open'); hamburger.classList.remove('open'); }
 
 // ---- CURSOR ----
 const cursor = document.getElementById('cursor');
